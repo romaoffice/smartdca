@@ -109,7 +109,7 @@ const closeAllOrders = async () => {
   if (position.positionAmt>0) {
     const order = await trade(symbol,"SELL",position.positionAmd);
     if(order.message){
-      add_log("Failed to close position",true,rt.message);
+      add_log("Failed to close position",true,order.message);
       return false;
     }else{
       console.log("Closed position");
