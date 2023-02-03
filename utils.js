@@ -68,7 +68,7 @@ async function initMarket(symbol){
 	          if(filter.filterType=="LOT_SIZE") amount = Number(filter.stepSize);
 	        })
 	        exchangeInfo.price = price;
-	        exchangeInfo.amount = amount;
+	        exchangeInfo.amount = 1;//amount;
         }
     });
     client.ws.futuresCustomSubStream([`${symbol.toLowerCase()}@markPrice`], (data)=>{

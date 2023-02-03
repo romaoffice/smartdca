@@ -182,7 +182,6 @@ const monitorOrders = async()=>{
       }else if(mustAdd){
         
         let cost = Number(roundStep((dcalevel+1)*firstbuyamount / current_price, precision.amount));
-        cost = cost.toFixed(0)
         console.log('buy',cost)
         const order = await trade(symbol,"BUY",cost);
         if (order.message) {
