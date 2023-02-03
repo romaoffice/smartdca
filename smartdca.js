@@ -106,7 +106,7 @@ const updateSettings=()=>{
 
 const closeAllOrders = async () => {
   const position = await getPosition(symbol)
-  if (position.positionAmd>0) {
+  if (position.positionAmt>0) {
     const order = await trade(symbol,"SELL",position.positionAmd);
     if(order.message){
       add_log("Failed to close position",true,rt.message);
@@ -133,7 +133,7 @@ const monitorOrders = async()=>{
       let mustAdd = false;
       let mustClose = false;
       let reason = "";
-      if(position.positionAmd==0){
+      if(Number(position.positionAmt)==0){
         
         const rt = checkBB();
         if(rt) {
