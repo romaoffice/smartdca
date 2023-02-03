@@ -133,6 +133,7 @@ const monitorOrders = async()=>{
       let mustAdd = false;
       let mustClose = false;
       let reason = "";
+      console.log('amount',Number(position.positionAmt));
       if(Number(position.positionAmt)==0){
         
         const rt = checkBB();
@@ -154,6 +155,7 @@ const monitorOrders = async()=>{
         }
       }else{
         const entry_price = Number(position.entryPrice);
+        console.log(lastentry*(1-nextdca/100),entry_price*(1-stoploss/100))
         if(dcalevel<maxgrid && current_price<lastentry*(1-nextdca/100)){
 
           const rt = checkBB();
@@ -164,12 +166,13 @@ const monitorOrders = async()=>{
           reason = "stoploss";
         }
         console.log(current_price,entry_price*(1+takeprofit/100),current_price>entry_price*(1+takeprofit/100));
-        if(current_price>position.entry_price*(1+takeprofit/100)){
+        if(current_price>entry_price*(1+takeprofit/100)){
           mustClose = true;
           reason = "takeprofit";
           console.log('Closing')
         }
       }
+
       if(mustClose){
 
         const rt = await closeAllOrders();
