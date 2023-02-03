@@ -62,6 +62,7 @@ async function initMarket(symbol){
         let price ;
         let amount ;
         if(symbolinfo.symbol==symbol){
+        	console.log(symbolinfo);
             symbolinfo.filters.map((filter)=>{
 	          if(filter.filterType=="PRICE_FILTER") price = Number(filter.tickSize);
 	          if(filter.filterType=="LOT_SIZE") amount = Number(filter.stepSize);
