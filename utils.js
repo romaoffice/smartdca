@@ -120,8 +120,7 @@ async function trade(symbol,side,quantity){
 async function main(){
 
 	console.log(await getPosition("AVAXUSDT"));
-	const client = getBinanceClient(apikey,secret);
-	console.log(await client.serverTime()); 
+	
 
 }
 
