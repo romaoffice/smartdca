@@ -152,7 +152,7 @@ const monitorOrders = async()=>{
           settings.firstbuyamount = firstbuyamount;
         }
       }else{
-        const entry_price = Number(position.entry_price);
+        const entry_price = Number(position.entryPrice);
         if(dcalevel<maxgrid && current_price<lastentry*(1-nextdca/100)){
 
           const rt = checkBB();
