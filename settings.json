@@ -10,7 +10,7 @@
   "bband_period":20,
   "bband_multi":1.5,
   "timeframe":"1m",
-  "dcalevel":0,
+  "dcalevel":1,
   "firstbuyamount":22,
   "lastentry":0
 
