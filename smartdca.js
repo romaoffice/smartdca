@@ -127,7 +127,7 @@ const monitorOrders = async()=>{
 
 
       let position = await getPosition(symbol)      
-      const current_price = position.markPrice;
+      const current_price = Number(position.markPrice);
       
       let mustAdd = false;
       let mustClose = false;
@@ -152,16 +152,17 @@ const monitorOrders = async()=>{
           settings.firstbuyamount = firstbuyamount;
         }
       }else{
+        const entry_price = Number(position.entry_price);
         if(dcalevel<maxgrid && current_price<lastentry*(1-nextdca/100)){
 
           const rt = checkBB();
           if(rt) mustAdd = true;
         }
-        if(current_price<position.entry_price*(1-stoploss/100)){
+        if(current_price<entry_price*(1-stoploss/100)){
           mustClose = true;
           reason = "stoploss";
         }
-        console.log(current_price,position.entry_price*(1+takeprofit/100),current_price>position.entry_price*(1+takeprofit/100));
+        console.log(current_price,entry_price*(1+takeprofit/100),current_price>entry_price*(1+takeprofit/100));
         if(current_price>position.entry_price*(1+takeprofit/100)){
           mustClose = true;
           reason = "takeprofit";
