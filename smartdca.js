@@ -137,7 +137,7 @@ const monitorOrders = async()=>{
       if(Number(position.positionAmt)==0){
         
         const rt = checkBB();
-        if(rt) {
+        if(true || rt) {
           mustAdd = true;
           const balance = Number(await getBalance());
           firstbuyamount = (balance * buyamount) / 100;
