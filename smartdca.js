@@ -161,6 +161,7 @@ const monitorOrders = async()=>{
           mustClose = true;
           reason = "stoploss";
         }
+        console.log(current_price,position.entry_price*(1+takeprofit/100),current_price>position.entry_price*(1+takeprofit/100));
         if(current_price>position.entry_price*(1+takeprofit/100)){
           mustClose = true;
           reason = "takeprofit";
