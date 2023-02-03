@@ -45,7 +45,7 @@ const getCandles = async()=>{
     candles = await client.futuresCandles({ symbol,interval:timeframe,limit:bband_period+1});
     candles.pop();
     updateBB();
-    console.log(lastBB);
+    
     
     client.ws.futuresCandles(symbol,timeframe,(candle) => {
       if(candle.isFinal){
@@ -133,7 +133,7 @@ const monitorOrders = async()=>{
       let mustAdd = false;
       let mustClose = false;
       let reason = "";
-      console.log('amount',Number(position.positionAmt));
+      
       if(Number(position.positionAmt)==0){
         
         const rt = checkBB();
@@ -155,7 +155,7 @@ const monitorOrders = async()=>{
         }
       }else{
         const entry_price = Number(position.entryPrice);
-        console.log(lastentry*(1-nextdca/100),entry_price*(1-stoploss/100))
+        
         if(dcalevel<maxgrid && current_price<lastentry*(1-nextdca/100)){
 
           const rt = checkBB();
@@ -165,7 +165,7 @@ const monitorOrders = async()=>{
           mustClose = true;
           reason = "stoploss";
         }
-        console.log(current_price,entry_price*(1+takeprofit/100),current_price>entry_price*(1+takeprofit/100));
+        
         if(current_price>entry_price*(1+takeprofit/100)){
           mustClose = true;
           reason = "takeprofit";
