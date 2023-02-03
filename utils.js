@@ -56,21 +56,23 @@ function getExchangeInfo(){
 async function initMarket(symbol){
 
 	const client = getBinanceClient(apikey,secret);
-	const markets = await client.exchangeInfo();
+	const markets = await client.futuresExchangeInfo();
 
 	await markets.symbols.map(async (symbolinfo) => {
         let price ;
         let amount ;
         if(symbolinfo.symbol==symbol){
-        	console.log(symbolinfo);
+        	
             symbolinfo.filters.map((filter)=>{
 	          if(filter.filterType=="PRICE_FILTER") price = Number(filter.tickSize);
 	          if(filter.filterType=="LOT_SIZE") amount = Number(filter.stepSize);
 	        })
 	        exchangeInfo.price = price;
-	        exchangeInfo.amount = 1;//amount;
+	        exchangeInfo.amount = amount;
         }
+
     });
+    console.log(exchangeInfo);
     client.ws.futuresCustomSubStream([`${symbol.toLowerCase()}@markPrice`], (data)=>{
     	globalPrice= data.P;
     })
