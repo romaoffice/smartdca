@@ -58,6 +58,7 @@ const getCandles = async()=>{
             closeTime: candle.closeTime,
         })
         updateBB();
+        console.log(lastBB);
       }
     });    
 }
