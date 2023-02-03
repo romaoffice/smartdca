@@ -183,7 +183,7 @@ const monitorOrders = async()=>{
         
         const cost = Number(roundStep((dcalevel+1)*firstbuyamount / current_price, precision.amount));
         console.log('buy',cost)
-        const order = await trade(symbol,"BUY",cost);
+        const order = await trade(symbol,"BUY",cost.toFixed(2));
         if (order.message) {
           add_log('Failed to place  order',true,{message:order.message})
           return;
