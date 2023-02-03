@@ -1,17 +1,1 @@
-{
-  "tokenlist" :[{"token":"AVAX"}],
-  "marketplace":"USDT",
-  "buyamount":30,
-  "buyamount_option":"usdvalue",
-  "takeprofit":0.8,
-  "stoploss":11,
-  "maxgrid":5,
-  "nextdca":0.8,
-  "bband_period":20,
-  "bband_multi":1.5,
-  "timeframe":"1m",
-  "dcalevel":1,
-  "firstbuyamount":22,
-  "lastentry":20.99
-
-}
+{"tokenlist":[{"token":"AVAX"}],"marketplace":"USDT","buyamount":30,"buyamount_option":"usdvalue","takeprofit":0.8,"stoploss":11,"maxgrid":5,"nextdca":0.8,"bband_period":20,"bband_multi":1.5,"timeframe":"1m","dcalevel":1,"firstbuyamount":30,"lastentry":21.216,"lasterror":"Failed to place  order{\"message\":\"Precision is over the maximum defined for this asset.\"}"}

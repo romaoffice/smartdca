@@ -45,6 +45,7 @@ const getCandles = async()=>{
     candles = await client.futuresCandles({ symbol,interval:timeframe,limit:bband_period+1});
     candles.pop();
     updateBB();
+    console.log(lastBB);
     
     client.ws.futuresCandles(symbol,timeframe,(candle) => {
       if(candle.isFinal){
@@ -58,7 +59,6 @@ const getCandles = async()=>{
             closeTime: candle.closeTime,
         })
         updateBB();
-        console.log(lastBB);
       }
     });    
 }
@@ -137,7 +137,7 @@ const monitorOrders = async()=>{
       if(Number(position.positionAmt)==0){
         
         const rt = checkBB();
-        if(true || rt) {
+        if(rt) {
           mustAdd = true;
           const balance = Number(await getBalance());
           firstbuyamount = (balance * buyamount) / 100;
