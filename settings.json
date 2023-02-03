@@ -1,0 +1,17 @@
+{
+  "tokenlist" :[{"token":"AVAX"}],
+  "marketplace":"USDT",
+  "buyamount":40,
+  "buyamount_option":"buy percent",
+  "takeprofit":0.8,
+  "stoploss":11,
+  "maxgrid":5,
+  "nextdca":0.8,
+  "bband_period":20,
+  "bband_multi":1.5,
+  "timeframe":"1m",
+  "dcalevel":0,
+  "firstbuyamount":0,
+  "lastentry":0
+
+}

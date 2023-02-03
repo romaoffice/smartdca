@@ -16,7 +16,7 @@
     "binance-api-node": "^0.11.28",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
-    "technicalindicators": "^3.1.0",
+    "technicalindicators": "^3.1.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

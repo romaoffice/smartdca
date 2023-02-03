@@ -1,12 +1,20 @@
-const getFirstAmount = (maxgrid,nextdca,maxdd,stoploss,balance)=>{
+const getEnvVar = (maxgrid=5,nextdca=0.8,totalloss=30,maxdd=20)=>{
 	
-	const leverage = (maxdd-stoploss)/(maxgrid * nextdca);
-	const totallevel = (1+maxgrid)*maxgrid/2;
-	const amount =(balance *  leverage /totallevel).toFixed(2);
+	const leverage = totalloss / maxdd ;
 
-	return amount;
+	const totalbuy_rate = (1+maxgrid)*maxgrid/2 ;
+	const firstamount_percent = (totalloss / maxdd)/totalbuy_rate * 100;
+	const stoploss = maxdd - maxgrid * nextdca;
+
+	return {firstamount_percent,stoploss,leverage};
 }
 
 module.exports = {
-	getFirstAmount
+	getEnvVar
 }
+
+const main = ()=>{
+	console.log(getEnvVar(5,0.8,90,15));
+}
+
+main();

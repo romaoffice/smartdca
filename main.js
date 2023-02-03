@@ -1,18 +1,6 @@
 var BB = require('technicalindicators').BollingerBands
-const db = require("../../models");
-const posMan = require("../position");
-const { roundStep } = require("../../utils.js");
-const { QueryTypes } = require("sequelize");
-const updater = require("../../updater");
-const Decimal = require('decimal.js');
-const commision = 0.999;
-const {checkEnoughBalanceSmart,getTotalInvestedSmartDca}=require("../../utils/dcalib");
-const {getBinanceClient} = require('../../utils')
-
-let exchangeId=104;
-let userId=9;
-let strategyId= 190214 ;
-let deals_id=0;
+let settings = require('./settings.json');
+const Binance = require("binance-api-node").default;
 
 let buyamount_option="usdvalue",buyamount=30,token="AVAX",marketplace="USDT";
 let bband_period=20,bband_multi=1.5;
@@ -21,26 +9,11 @@ let dcalevel=0;
 let lastentry=0;
 let firstbuyamount =0;
 let timeframe='5m';
-let symbol="BNBUSDT";
+let symbol="AVAXUSDT";
 let precision;
 let candles=[];
 let lastBB = {};
-let settings={
-  tokenlist :[{token}],
-  marketplace,
-  buyamount,
-  buyamount_option,
-  takeprofit,
-  stoploss,
-  maxgrid,
-  nextdca,
-  bband_period,
-  bband_multi,
-  timeframe,
-  dcalevel,
-  firstbuyamount,
-  lastentry
-};
+
 const checkBB = ()=>{
   return lastBB.close>0 && lastBB.close<lastBB.lower;
 }
@@ -56,19 +29,19 @@ const updateBB = ()=>{
 }
 const getCandles = async()=>{
 
-    const exchange = await db.exchange.findOne({ where: { id: exchangeId } });
-    if (!exchange) return false;
-    let client = await getBinanceClient(
-      "",
-      "",
-      exchange.isdemo
-    );
+    let binanceParams = {
+        recvWindow: 50000
+    }
+
+    binanceParams.httpBase = `http://${endpoint}`;
+    binanceParams.wsBase = `ws://${endpoint}:2083`;
+
+    const client = Binance( binanceParams);
 
     candles = await client.candles({ symbol,interval:timeframe,limit:bband_period+1});
     candles.pop();
     updateBB();
     
-    client = await getBinanceClient("", "", false,true);
     client.ws.candles(symbol,timeframe,(candle) => {
       if(candle.isFinal){
         candles.push({
@@ -89,68 +62,17 @@ const getCandles = async()=>{
 }
 const add_log = async (log, iserror = false, otherDetails = {}) => {
   console.log(log);
-  if (iserror) {
-    console.log({
-      userId: userId,
-      strategyId: strategyId,
-      exchangeId: exchangeId,
-      desc: log,
-      pairs: token,
-      based: marketplace,
-      date: db.gettimestring(),
-      otherDetails: JSON.stringify(otherDetails),
-    })
-    await db.error.create({
-      userId: userId,
-      strategyId: strategyId,
-      exchangeId: exchangeId,
-      desc: log,
-      pairs: token,
-      based: marketplace,
-      date: db.gettimestring(),
-      otherDetails: JSON.stringify(otherDetails),
-    });
-    const strategy = await db.strategy.findOne({ where: { id: strategyId } });
-    await strategy.update({ status: "stop" ,lasterror:log+" "+JSON.stringify(otherDetails)});
-  }else{
-    await db.logs.create({
-      dealId: deals_id,
-      userId: userId,
-      exchangeId: exchangeId,
-      log: log,
-      otherData: JSON.stringify(otherDetails),
-      pair: token,
-      logType: 'ORDER_LOG',
-      based: marketplace,
-      date: db.gettimestring(),
-    });
+  if(iserror){
+    settings.status='stop';
+    settings.lasterror = log+JSON.stringify(otherDetails);
+    await updateSettings();
   }
 
 };
 
 const smartDcaBot = async(_userId,_exchangeId,_strategyId)=>{
   
-  exchangeId = _exchangeId;
-  userId = _userId;
-  strategyId = _strategyId;
-  
-
-
-  const strategy = await db.strategy.findOne({ where: { id: strategyId } });
-  if (!strategy) {
-    console.log("not strategy",strategyId);
-    return "Invalid strategy.";
-  }
-  const api = await db.exchange.findOne({ where: { id: exchangeId } });
-  if (!api || api.valid==0){
-    console.log("Invalid exchange.",exchangeId);
-    strategy.update({status:'stop'});
-    return "Invalid exchange.";
-  }
-  if(strategy.settings){
-    console.log('init from db settings');
-    settings = JSON.parse(strategy.settings);
-  }
+  settings = JSON.parse(strategy.settings);
 
   buyamount_option=settings.buyamount_option;
   buyamount=settings.buyamount;
@@ -177,10 +99,10 @@ const smartDcaBot = async(_userId,_exchangeId,_strategyId)=>{
   return "";
 }
 
-const updateSettings=async()=>{
-  const strategy = await db.strategy.findOne({ where: { id: strategyId } });
-  await strategy.update({settings:JSON.stringify(settings)})
+const updateSettings=()=>{
+  fs.writeFileSync('settings.json', JSON.stringify(settings));
 }
+
 
 
 const closeAllOrders = async () => {
@@ -217,19 +139,7 @@ const monitorOrders = async()=>{
 
   try{
       let position = await posMan.getPosition(userId, strategyId, token, "All");
-      if(position){
-        deals_id = position.id;
-      }
-      let starategystatus = await db.strategy.findOne({
-        where: { id: strategyId },
-      });
-      if (starategystatus && starategystatus.status == "stop") {
-        await closeAllOrders();
-        console.log("Strategy terminated.",strategyId);
-        return;
-      }
-      if (starategystatus == undefined) {
-        console.log("deleted strategy",strategyId);
+      if (settings.status == "stop") {
         return;
       }
       let positionClosed = false;
