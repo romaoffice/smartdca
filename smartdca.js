@@ -10,6 +10,7 @@ const {
   getExchangeInfo,
   getBalance ,
   getPosition,
+  setPosition,
   trade
 } = require('./utils.js');
 
@@ -24,6 +25,7 @@ let symbol="AVAXUSDT";
 let precision;
 let candles=[];
 let lastBB = {};
+let position;
 
 const checkBB = ()=>{
   return lastBB.close>0 && lastBB.close<lastBB.lower;
@@ -94,6 +96,8 @@ const smartDcaBot = async()=>{
   await updateSettings();
   await getCandles();
   console.log("Initialized",settings);
+  position = getPosition(symbol);
+  console.log(position);
   monitorOrders();
   return "";
 }
@@ -125,10 +129,8 @@ const monitorOrders = async()=>{
         console.log("Terminated");
         return;
       }
-
-
-      let position = await getPosition(symbol)      
-      const current_price = Number(position.markPrice);
+      position = getPosition();      
+      const current_price = getPrice();
       
       let mustAdd = false;
       let mustClose = false;
@@ -205,6 +207,9 @@ const monitorOrders = async()=>{
         if(mustClose) {
           if(reason=='stoploss') return;
         }
+        setPosition(symbol);
+        setTimeout(()=>{setPosition(symbol)},3000);
+        console.log(getPosition());
       }
       setTimeout(monitorOrders, 2000);
 

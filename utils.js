@@ -3,7 +3,7 @@ const {apikey,secret} = require("./config.json")
 
 let globalPrice;
 let exchangeInfo={};
-
+let globalPosition;
 Number.prototype.noExponents = function() {
 	var data = String(this).split(/[eE]/);
 	if (data.length == 1) return data[0];
@@ -72,7 +72,6 @@ async function initMarket(symbol){
         }
 
     });
-    console.log(exchangeInfo);
     client.ws.futuresCustomSubStream([`${symbol.toLowerCase()}@markPrice`], (data)=>{
     	globalPrice= data.P;
     })
@@ -80,7 +79,16 @@ async function initMarket(symbol){
     client.ws.futuresCustomSubStream([`${symbol.toLowerCase()}@markPrice`], (data)=>{
     	globalPrice= data.P;
     })
-	
+    await setPosition(symbol);
+	client.ws.futuresUser(msg=>{
+		console.log("event log",msg);
+		msg.positions.map((position)=>{
+			if(position.symbol.toLowerCase()==symbol.toLowerCase() && position.positionSide=="LONG"){
+				globalPosition = position;
+				console.log('Updated position');
+			}
+		})
+	})
 }
 async function getBalance(asset='USDT'){
 	const client = getBinanceClient(apikey,secret);
@@ -93,17 +101,17 @@ async function getBalance(asset='USDT'){
 	})
 	return (balance);
 }
-async function getPosition(symbol){
+function getPosition(){
+	return globalPosition;
+}
+async function setPosition(symbol){
 	const client = getBinanceClient(apikey,secret);
 	const position_list = await client.futuresPositionRisk();
-	let position;
 	position_list.map((info)=>{
 		if(info.symbol.toLowerCase()==symbol.toLowerCase()){
-			position = info;
+			globalPosition = info;
 		}
 	})
-	return (position);
-
 }
 async function trade(symbol,side,quantity){
 	try{
@@ -121,9 +129,9 @@ async function trade(symbol,side,quantity){
 	}
 }
 async function main(){
-
+	await initMarket("AVAXUSDT");
 	// console.log(await trade("AVAXUSDT","BUY",1.1))
-	console.log(await getPosition("AVAXUSDT"));
+	console.log(getPosition());
 
 }
 
@@ -136,5 +144,6 @@ module.exports = {
 	getExchangeInfo,
 	getBalance,
 	getPosition,
+	setPosition,
 	trade
 }
