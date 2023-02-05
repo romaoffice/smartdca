@@ -110,6 +110,7 @@ async function setPosition(symbol){
 	position_list.map((info)=>{
 		if(info.symbol.toLowerCase()==symbol.toLowerCase()){
 			globalPosition = info;
+			console.log("position",globalPosition);
 		}
 	})
 }
