@@ -130,9 +130,9 @@ async function trade(symbol,side,quantity){
 	}
 }
 async function main(){
-	await initMarket("AVAXUSDT");
+//	await initMarket("AVAXUSDT");
 	// console.log(await trade("AVAXUSDT","BUY",1.1))
-	console.log(getPosition());
+//	console.log(getPosition());
 
 }
 
