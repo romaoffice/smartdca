@@ -73,12 +73,9 @@ async function initMarket(symbol){
 
     });
     client.ws.futuresCustomSubStream([`${symbol.toLowerCase()}@markPrice`], (data)=>{
-    	globalPrice= data.P;
+    	globalPrice= data.p;
     })
 
-    client.ws.futuresCustomSubStream([`${symbol.toLowerCase()}@markPrice`], (data)=>{
-    	globalPrice= data.P;
-    })
     await setPosition(symbol);
 	client.ws.futuresUser(msg=>{
 		console.log("event log",msg);
