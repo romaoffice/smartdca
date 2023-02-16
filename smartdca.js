@@ -107,8 +107,8 @@ const updateSettings=()=>{
 
 const closeAllOrders = async () => {
   const position = await getPosition(symbol)
-  if (position.positionAmt!=0) {
-    const order = await trade(symbol,position.positionSide=='LONG'?"SELL":"BUY",Math.abs(position.positionAmt));
+  if (Number(position.positionAmt)!=0) {
+    const order = await trade(symbol,Number(position.positionAmt)>0?"SELL":"BUY",Math.abs(position.positionAmt));
     if(order.message){
       add_log("Failed to close position",true,order.message);
       return false;
